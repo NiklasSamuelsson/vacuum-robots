@@ -20,10 +20,6 @@ class QAgent{
         int GetAction(vector<vector<int>> state){
             int action;
 
-            if(Q.find(state) == Q.end()){
-                InitStateInQ(state);
-            }
-
             if(dist(gen) < exploration_factor){
                 action = GetRandomAction();
             }
@@ -71,6 +67,10 @@ class QAgent{
             env.Reset()
             state = env.GetState();
             while(!done){
+                // Initialize state in Q if it's new
+                if(Q.find(state) == Q.end()){
+                    InitStateInQ(state);
+                }
                 // action = GetAction(state);
                 cTransition = env.Step(action);
                 // UpdateQ(cTransition.oldState, cTransition.action, cTransition.reward, cTransition.newState);
