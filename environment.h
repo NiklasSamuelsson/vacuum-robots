@@ -1,3 +1,6 @@
+#ifndef ENVIRONMENT_H
+#define ENVIRONMENT_H
+
 #include <iostream>
 #include <vector>
 
@@ -135,14 +138,4 @@ class Room{
         }
 };
 
-int main(){
-    Room TestRoom(6, 10);
-    transition temp;
-    for(int i = 0; i < 10-1; i++){
-        temp = TestRoom.Step(4);
-        TestRoom.Render(0);
-        cout<<"\n";
-        TestRoom.Render(1);
-        cout<<"\n";
-    }
-}
+#endif
