@@ -10,17 +10,18 @@ class QAgent{
     private:
         float discount, learning_rate, exploration_factor;
         Room& env;
+        // Key: state, value: map over actions and their values
         map<vector<vector<int>>, map<int, float>> Q;
         random_device rd;
-        mt19937 gen(rd());
-        uniform_real_distribution<> dist_exp(0.0, 1.0);
+        mt19937 gen;
+        uniform_real_distribution<double> dist_exp;
         // TODO: make this dynamic to adapt to the action space
-        uniform_int_distribution<> dist_actions(1, 5);
+        uniform_int_distribution<int> dist_actions;
 
         int GetAction(vector<vector<int>> state){
             int action;
 
-            if(dist(gen) < exploration_factor){
+            if(dist_exp(gen) < exploration_factor){
                 action = GetRandomAction();
             }
             else{
@@ -32,7 +33,15 @@ class QAgent{
 
         int GetGreedyAction(vector<vector<int>> state){
             int action;
-            // TODO: find key for lowest value
+            float best_value = 9999999;
+
+            auto iter = Q[state].begin();
+            while(iter != Q[state].end()){
+                if(iter->second < best_value){
+                    action = iter->first;
+                    best_value = iter->second;
+                }
+            }
             return action;
         }
 
@@ -51,7 +60,7 @@ class QAgent{
         QAgent(float discount, 
                float learing_rate, 
                float exploration_factor,
-               Room& env) : env(env){
+               Room& env) : env(env), gen(rd()), dist_exp(0.0, 1.0), dist_actions(1, 5) {
             this->discount = discount;
             this->learning_rate = learing_rate;
             this->exploration_factor = exploration_factor;
@@ -64,14 +73,14 @@ class QAgent{
             int noSteps = 0;
             bool done = false;
 
-            env.Reset()
+            env.Reset();
             state = env.GetState();
             while(!done){
                 // Initialize state in Q if it's new
                 if(Q.find(state) == Q.end()){
                     InitStateInQ(state);
                 }
-                // action = GetAction(state);
+                action = GetAction(state);
                 cTransition = env.Step(action);
                 // UpdateQ(cTransition.oldState, cTransition.action, cTransition.reward, cTransition.newState);
                 state = cTransition.newState;
