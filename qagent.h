@@ -41,6 +41,7 @@ class QAgent{
                     action = iter->first;
                     best_value = iter->second;
                 }
+                ++iter;
             }
             return action;
         }
@@ -56,6 +57,18 @@ class QAgent{
             }
         }
 
+        void UpdateQ(transition cTransition){
+            float TDError;
+            int bestQAction;
+            float bestQVal;
+
+            bestQAction = GetGreedyAction(cTransition.newState);
+            bestQVal = Q[cTransition.newState][bestQAction];
+
+            TDError = cTransition.reward + discount*bestQVal - Q[cTransition.oldState][cTransition.action];
+            Q[cTransition.oldState][cTransition.action] += learning_rate*TDError;
+        }
+
     public:
         QAgent(float discount, 
                float learing_rate, 
@@ -66,7 +79,7 @@ class QAgent{
             this->exploration_factor = exploration_factor;
         }
 
-        int TrainOneEpisode(){
+        int RunOneEpisode(bool train){
             vector<vector<int>> state;
             int action;
             transition cTransition;
@@ -75,16 +88,27 @@ class QAgent{
 
             env.Reset();
             state = env.GetState();
+            // Initialize state in Q if it's new
+            if(Q.find(state) == Q.end()){
+                InitStateInQ(state);
+            }
             while(!done){
+                if(train){
+                    action = GetAction(state);
+                }
+                else{
+                    action = GetGreedyAction(state);
+                }
+                cTransition = env.Step(action);
+                state = cTransition.newState;
+                done = cTransition.done;
                 // Initialize state in Q if it's new
                 if(Q.find(state) == Q.end()){
                     InitStateInQ(state);
                 }
-                action = GetAction(state);
-                cTransition = env.Step(action);
-                // UpdateQ(cTransition.oldState, cTransition.action, cTransition.reward, cTransition.newState);
-                state = cTransition.newState;
-                done = cTransition.done;
+                if(train){
+                    UpdateQ(cTransition);
+                }
                 noSteps += 1;
             }
             return noSteps;

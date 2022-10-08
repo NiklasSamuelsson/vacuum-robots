@@ -30,7 +30,7 @@ class Room{
     private:
         int m, n;
         agentPosition cAgentPos;
-        // 3D vector: row, col, map overlay[cleaning status, action location]
+        // 3D vector: row, col, map overlay[cleaning status, agent location]
         vector<vector<vector<int>>> grid;
         vector<vector<int>> state;
 
