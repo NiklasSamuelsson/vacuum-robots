@@ -31,7 +31,9 @@ class Room{
         int m, n;
         agentPosition cAgentPos;
         // 3D vector: row, col, map overlay[cleaning status, agent location]
+        // TODO: make grid as a class (to be used in state)
         vector<vector<vector<int>>> grid;
+        // TODO: make state into a class
         vector<vector<int>> state;
 
         bool CheckIfDone(){
