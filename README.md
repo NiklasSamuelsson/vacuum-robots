@@ -4,3 +4,8 @@ A learning project for C++ of a simple enivironment with a vacuum robot and a re
 - The robot can only travel to adjacent squares (not diagonally) or idle
 - The reward function is a cost of 1 each time step being passed
 - The agent controlling the robot is a basic Q-learning agent
+
+## TODO
+- [ ] Make the action space for the agent dynamic
+- [ ] Create the grid as a class
+- [ ] Make the state as a class
